@@ -1,6 +1,6 @@
-set -o errext
+set -o errexit
 
-pip install -r requirement.textblob
+pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
 
