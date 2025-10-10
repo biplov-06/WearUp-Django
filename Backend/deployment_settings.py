@@ -12,7 +12,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'whiteNoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -30,7 +30,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
     "staticfiles": {
-        "BACKEND": "whiteNoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
 }
 
