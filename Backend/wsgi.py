@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 
 settings_module = 'Backend.deployment_settings' if 'RENDER_EXTERNAL_HOSTNAME' in os.environ else 'Backend.settings'
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 
 application = get_wsgi_application()
