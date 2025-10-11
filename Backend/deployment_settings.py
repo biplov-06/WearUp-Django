@@ -2,7 +2,6 @@ import os
 import dj_database_url
 from .settings import *
 from .settings import BASE_DIR
-from cloudinary_storage.storage import MediaCloudinaryStorage
 
 ALLOWED_HOSTS = ['wearup-django.onrender.com']
 CSRF_TRUSTED_ORIGINS = ['https://wearup-django.onrender.com']
@@ -30,7 +29,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STORAGES = {
     "default": {
-        "BACKEND": MediaCloudinaryStorage,
+        "BACKEND": 'cloudinary_storage.storage.MediaCloudinaryStorage',
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
