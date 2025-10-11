@@ -13,7 +13,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
     def get_image(self, obj):
-        return obj.image.url if obj.image else None
+        try:
+            return obj.image.url if obj.image else None
+        except Exception:
+            return None
 
     class Meta:
         model = ProductImage
@@ -51,10 +54,16 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         main_image = obj.images.filter(is_main=True).first()
         if main_image:
-            return main_image.image.url
+            try:
+                return main_image.image.url
+            except Exception:
+                return None
         first_image = obj.images.first()
         if first_image:
-            return first_image.image.url
+            try:
+                return first_image.image.url
+            except Exception:
+                return None
         return None
 
     def get_category(self, obj):
@@ -80,7 +89,10 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.seller:
             try:
                 profile = obj.seller.profile
-                avatar = profile.profile_image.url if profile.profile_image else f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
+                try:
+                    avatar = profile.profile_image.url if profile.profile_image else f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
+                except Exception:
+                    avatar = f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
                 name = obj.seller.get_full_name() or obj.seller.username
                 handle = f'@{obj.seller.username}'
                 verified = profile.role in ['seller', 'admin']
