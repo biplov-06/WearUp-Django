@@ -2,9 +2,10 @@ import os
 import dj_database_url
 from .settings import *
 from .settings import BASE_DIR
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
-ALLOWED_HOSTS = ['wearup-django-1.onrender.com']
-CSRF_TRUSTED_ORIGINS = ['https://wearup-django-1.onrender.com']
+ALLOWED_HOSTS = ['wearup-django.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://wearup-django.onrender.com']
 
 DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -25,21 +26,15 @@ MIDDLEWARE = [
 #     "http://localhost:5173"
 # ]
 
-import cloudinary_storage
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 STORAGES = {
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-        },
+        "BACKEND": MediaCloudinaryStorage,
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
-        },
+    },
 }
 
 DATABASES = {

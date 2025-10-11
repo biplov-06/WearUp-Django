@@ -10,6 +10,11 @@ from .models import (
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        return obj.image.url if obj.image else None
+
     class Meta:
         model = ProductImage
         fields = ['image', 'is_main']
