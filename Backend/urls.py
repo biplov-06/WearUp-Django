@@ -50,5 +50,4 @@ urlpatterns = [
     path('api/products/<int:product_id>/share/', share_product, name='share_product'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
