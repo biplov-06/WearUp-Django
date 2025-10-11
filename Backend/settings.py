@@ -166,7 +166,10 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'cTHWALgR68X7UbrydN6V7DtWTaA',
 }
  
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage' 
+if DEBUG:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
  
 cloudinary.config( 
     cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'], 

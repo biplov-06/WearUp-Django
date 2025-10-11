@@ -2,7 +2,9 @@ from rest_framework import serializers
 import json
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
+import cloudinary.api
 from .models import (
     Product, Size, Category, Color, ProductImage, ProductVariant, UserProfile, Address,
     Cart, CartItem, Order, OrderItem, ProductLike, ProductComment, ProductShare
@@ -14,7 +16,11 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         try:
-            return obj.image.url if obj.image else None
+            if obj.image:
+                resource = cloudinary.api.resource(obj.image)
+                return resource['secure_url']
+            else:
+                return None
         except Exception:
             return None
 
@@ -24,6 +30,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     sizes = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
     main_image = serializers.ImageField(required=False, write_only=True)
@@ -31,15 +38,25 @@ class ProductSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     base_price_input = serializers.DecimalField(source='base_price', max_digits=10, decimal_places=2, write_only=True, required=False)
     seller = serializers.SerializerMethodField()
-    name = serializers.CharField(source='product_name', read_only=True)
-    price = serializers.DecimalField(source='final_price', max_digits=10, decimal_places=2, read_only=True)
+    name = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
-    rating = serializers.DecimalField(source='average_rating', max_digits=3, decimal_places=1, read_only=True)
+    rating = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     shares = serializers.SerializerMethodField()
     user_liked = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+    base_price = serializers.SerializerMethodField()
+    discount_percentage = serializers.SerializerMethodField()
+    stock_quantity = serializers.SerializerMethodField()
+    views = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    gender = serializers.SerializerMethodField()
+    sku = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    is_featured = serializers.SerializerMethodField()
 
     def get_sizes(self, obj):
         variants = obj.variants.all()
@@ -58,13 +75,15 @@ class ProductSerializer(serializers.ModelSerializer):
         main_image = obj.images.filter(is_main=True).first()
         if main_image:
             try:
-                return main_image.image.url
+                resource = cloudinary.api.resource(main_image.image)
+                return resource['secure_url']
             except Exception:
                 return None
         first_image = obj.images.first()
         if first_image:
             try:
-                return first_image.image.url
+                resource = cloudinary.api.resource(first_image.image)
+                return resource['secure_url']
             except Exception:
                 return None
         return None
@@ -88,12 +107,100 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.liked_by.filter(user=request.user).exists()
         return False
 
+    def get_name(self, obj):
+        try:
+            return obj.product_name
+        except Exception:
+            return None
+
+    def get_price(self, obj):
+        try:
+            return obj.final_price
+        except Exception:
+            return None
+
+    def get_id(self, obj):
+        try:
+            return obj.id
+        except Exception:
+            return None
+
+    def get_rating(self, obj):
+        try:
+            return obj.average_rating
+        except Exception:
+            return None
+
+    def get_tags(self, obj):
+        try:
+            return obj.tags
+        except Exception:
+            return {}
+
+    def get_base_price(self, obj):
+        try:
+            return obj.base_price
+        except Exception:
+            return None
+
+    def get_discount_percentage(self, obj):
+        try:
+            return obj.discount_percentage
+        except Exception:
+            return None
+
+    def get_stock_quantity(self, obj):
+        try:
+            return obj.stock_quantity
+        except Exception:
+            return None
+
+    def get_views(self, obj):
+        try:
+            return obj.views
+        except Exception:
+            return None
+
+    def get_description(self, obj):
+        try:
+            return obj.description
+        except Exception:
+            return None
+
+    def get_gender(self, obj):
+        try:
+            return obj.gender
+        except Exception:
+            return None
+
+    def get_sku(self, obj):
+        try:
+            return obj.sku
+        except Exception:
+            return None
+
+    def get_status(self, obj):
+        try:
+            return obj.status
+        except Exception:
+            return None
+
+    def get_is_featured(self, obj):
+        try:
+            return obj.is_featured
+        except Exception:
+            return False
+
     def get_seller(self, obj):
         if obj.seller:
             try:
                 profile = obj.seller.profile
                 try:
-                    avatar = profile.profile_image.url if profile.profile_image else f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
+                    if profile.profile_image:
+                        resource = cloudinary.api.resource(profile.profile_image)
+                        avatar = resource['secure_url']
+                    else:
+                        avatar = f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
                 except Exception:
                     avatar = f'https://ui-avatars.com/api/?name={obj.seller.username}&size=40&background=667eea&color=fff'
                 name = obj.seller.get_full_name() or obj.seller.username
@@ -125,7 +232,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'description', 'gender', 'stock_quantity', 'sizes', 'categories', 'tags', 'base_price', 'discount_percentage', 'final_price', 'sku', 'status', 'is_featured', 'views', 'average_rating', 'main_image', 'additional_images', 'images', 'base_price_input', 'price', 'seller', 'name', 'image', 'category', 'rating', 'likes', 'comments', 'shares', 'user_liked']
+        fields = ['id', 'description', 'gender', 'stock_quantity', 'sizes', 'categories', 'tags', 'base_price', 'discount_percentage', 'sku', 'status', 'is_featured', 'views', 'main_image', 'additional_images', 'images', 'base_price_input', 'price', 'seller', 'name', 'image', 'category', 'rating', 'likes', 'comments', 'shares', 'user_liked']
 
     def create(self, validated_data):
         main_image = validated_data.pop('main_image', None)
@@ -253,6 +360,28 @@ class LoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    profile_image = serializers.SerializerMethodField()
+    cover_image = serializers.SerializerMethodField()
+
+    def get_profile_image(self, obj):
+        try:
+            if obj.profile_image:
+                resource = cloudinary.api.resource(obj.profile_image)
+                return resource['secure_url']
+            else:
+                return None
+        except Exception:
+            return None
+
+    def get_cover_image(self, obj):
+        try:
+            if obj.cover_image:
+                resource = cloudinary.api.resource(obj.cover_image)
+                return resource['secure_url']
+            else:
+                return None
+        except Exception:
+            return None
 
     class Meta:
         model = UserProfile
