@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.utils.text import slugify
 from decimal import Decimal
+from cloudinary.models import CloudinaryField
 
 
 # -----------------------
@@ -22,8 +23,8 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=100, blank=True)
     website = models.URLField(blank=True)
     business_name = models.CharField(max_length=100, blank=True)
-    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
-    cover_image = models.ImageField(upload_to='covers/', blank=True, null=True)
+    profile_image = CloudinaryField('image', blank=True, null=True)
+    cover_image = CloudinaryField('image', blank=True, null=True)
 
     # Private fields (only visible to the same user)
     phone = models.CharField(max_length=20, blank=True)
@@ -71,7 +72,7 @@ class Address(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='categories/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='subcategories')
 
     def __str__(self):
@@ -157,7 +158,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="products/")
+    image = CloudinaryField('image')
     alt_text = models.CharField(max_length=255, blank=True)
     is_main = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)

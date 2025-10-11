@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
     'WearUpBack',
 
 ]
@@ -152,3 +154,22 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+ 
+# Cloudinary settings 
+import cloudinary 
+import cloudinary.uploader 
+import cloudinary.api 
+ 
+CLOUDINARY_STORAGE = { 
+    'CLOUD_NAME': 'your_cloud_name',  # Replace with your Cloudinary cloud name 
+    'API_KEY': 'your_api_key',       # Replace with your Cloudinary API key 
+    'API_SECRET': 'your_api_secret', # Replace with your Cloudinary API secret 
+} 
+ 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage' 
+ 
+cloudinary.config( 
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'], 
+    api_key=CLOUDINARY_STORAGE['API_KEY'], 
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'], 
+) 
