@@ -42,3 +42,20 @@ DATABASES = {
         conn_max_age=600
     )
 }
+
+# Cloudinary settings for production
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'dbecoviqc'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '494726599817793'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'cTHWALgR68X7UbrydN6V7DtWTaA'),
+}
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+)

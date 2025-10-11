@@ -17,11 +17,11 @@ class ProductImageSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         try:
             if obj.image:
-                resource = cloudinary.api.resource(obj.image)
-                return resource['secure_url']
+                return obj.image.url
             else:
                 return None
-        except Exception:
+        except Exception as e:
+            print(f"Error getting image for ProductImage {obj.id}: {e}")
             return None
 
     class Meta:
@@ -75,15 +75,13 @@ class ProductSerializer(serializers.ModelSerializer):
         main_image = obj.images.filter(is_main=True).first()
         if main_image:
             try:
-                resource = cloudinary.api.resource(main_image.image)
-                return resource['secure_url']
+                return main_image.image.url
             except Exception:
                 return None
         first_image = obj.images.first()
         if first_image:
             try:
-                resource = cloudinary.api.resource(first_image.image)
-                return resource['secure_url']
+                return first_image.image.url
             except Exception:
                 return None
         return None

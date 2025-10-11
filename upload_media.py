@@ -25,7 +25,7 @@ def upload_folder_to_cloudinary(local_folder):
     for file_path in folder_path.rglob('*'):
         if file_path.is_file() and file_path.suffix.lower() in ['.jpg', '.jpeg', '.png', '.webp', '.gif']:
             relative_path = os.path.relpath(file_path, MEDIA_DIR).replace('\\', '/')
-            public_id = relative_path.rsplit('.', 1)[0]  # remove extension
+            public_id = "v1/" + relative_path.rsplit('.', 1)[0]  # remove extension and add v1/
             try:
                 # Upload to Cloudinary with public_id
                 response = cloudinary.uploader.upload(
