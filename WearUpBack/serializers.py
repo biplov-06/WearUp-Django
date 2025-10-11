@@ -49,7 +49,10 @@ class ProductSerializer(serializers.ModelSerializer):
         return [category.name for category in obj.categories.all()]
 
     def get_images(self, obj):
-        return ProductImageSerializer(obj.images.all(), many=True).data
+        try:
+            return ProductImageSerializer(obj.images.all(), many=True).data
+        except Exception:
+            return []
 
     def get_image(self, obj):
         main_image = obj.images.filter(is_main=True).first()
@@ -112,6 +115,13 @@ class ProductSerializer(serializers.ModelSerializer):
                     'verified': False
                 }
         return None
+
+    def to_representation(self, instance):
+        try:
+            return super().to_representation(instance)
+        except Exception as e:
+            print(f"Error serializing product {instance.id}: {e}")
+            return {}
 
     class Meta:
         model = Product
