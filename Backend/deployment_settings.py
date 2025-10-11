@@ -3,8 +3,8 @@ import dj_database_url
 from .settings import *
 from .settings import BASE_DIR
 
-ALLOWED_HOSTS = ['wearup-django.onrender.com']
-CSRF_TRUSTED_ORIGINS = ['https://wearup-django.onrender.com']
+ALLOWED_HOSTS = ['wearup-django-1.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://wearup-django-1.onrender.com']
 
 DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
